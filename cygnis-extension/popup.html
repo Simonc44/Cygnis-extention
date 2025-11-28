@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CygnisAI</title>
+
+  <!-- Google fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0b0c0f;
+      --panel:#0f1720;
+      --muted:#98a0a8;
+      --glass: rgba(255,255,255,0.04);
+      --accent-1: #ff8a00;
+      --accent-2: #ff3cac;
+      --accent-grad: linear-gradient(135deg,var(--accent-1),var(--accent-2));
+      --radius: 14px;
+      --shadow: 0 6px 24px rgba(2,6,23,0.6);
+      --glass-border: rgba(255,255,255,0.04);
+    }
+
+    /* popup fixed size (Chrome extension) */
+    html,body{
+      height:100%;
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 10% 10%, rgba(255,138,0,0.06), transparent 6%),
+        radial-gradient(900px 500px at 90% 90%, rgba(255,60,172,0.04), transparent 6%),
+        var(--bg);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      color: #e6eef8;
+      width:350px;
+      height:500px;
+      box-sizing:border-box;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+
+    .card{
+      width:100%;
+      height:100%;
+      border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(8px) saturate(120%);
+    }
+
+    /* Header */
+    .header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 14px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+      border-bottom: 1px solid rgba(255,255,255,0.02);
+    }
+
+    .logo {
+      width:40px;
+      height:40px;
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      box-shadow: 0 3px 10px rgba(2,6,23,0.5) inset;
+      flex:0 0 40px;
+    }
+
+    .logo img{
+      width:28px;
+      height:28px;
+      object-fit:contain;
+      display:block;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,0.4));
+    }
+
+    .title {
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      line-height:1;
+    }
+
+    .title .name{
+      font-family: "Space Grotesk", "Inter", sans-serif;
+      font-weight:600;
+      font-size:15px;
+      letter-spacing:0.2px;
+      color: #fff;
+    }
+
+    .title .small{
+      font-size:11px;
+      color:var(--muted);
+      margin-top:2px;
+    }
+
+    .actions{
+      margin-left:auto;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    .btn {
+      --btn-h:34px;
+      height:var(--btn-h);
+      min-width:34px;
+      padding:6px 10px;
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.04);
+      color:var(--muted);
+      border-radius:10px;
+      font-size:12px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .btn:hover { color:#fff; border-color: rgba(255,255,255,0.08); transform:translateY(-1px); transition:all .15s ease; }
+
+    .btn.primary{
+      background: var(--accent-grad);
+      color:#0b0c0f;
+      border:none;
+      font-weight:600;
+      box-shadow: 0 6px 18px rgba(255,85,120,0.08);
+    }
+
+    /* iframe container */
+    .iframe-wrap{
+      position:relative;
+      flex:1;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    }
+
+    iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+    }
+
+    /* loader / overlay when iframe not loaded or blocked */
+    .placeholder{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      padding:20px;
+      text-align:center;
+      background: linear-gradient(180deg, rgba(2,6,23,0.25), rgba(2,6,23,0.25));
+      color:var(--muted);
+      transition:opacity .25s ease, visibility .25s;
+      z-index:5;
+    }
+
+    .placeholder.hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .spinner{
+      width:56px;
+      height:56px;
+      border-radius:50%;
+      background: conic-gradient(from 120deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      position:relative;
+      box-shadow: inset 0 -6px 18px rgba(0,0,0,0.6);
+    }
+
+    .spinner::after{
+      content:'';
+      position:absolute;
+      inset:6px;
+      border-radius:50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    }
+
+    .placeholder .title{
+      font-weight:600;
+      color:#fff;
+      letter-spacing:.2px;
+      font-size:14px;
+    }
+
+    .placeholder .desc{
+      font-size:12px;
+      color:var(--muted);
+      max-width:260px;
+      line-height:1.35;
+    }
+
+    /* footer */
+    .footer{
+      padding:10px 14px;
+      border-top:1px solid rgba(255,255,255,0.02);
+      display:flex;
+      gap:8px;
+      align-items:center;
+      justify-content:space-between;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.01));
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .footer a { color:var(--muted); text-decoration:none; }
+    .footer a:hover { color:#fff; }
+
+    /* small screens fallback */
+    @media (max-width:420px){
+      html,body{ width:320px; height:560px; padding:12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card" role="application" aria-label="CygnisAI mini popup">
+    <div class="header">
+      <div class="logo" aria-hidden="true">
+        <!-- Replace src with your 128x128 icon -->
+        <img src="https://github.com/Simonc44/Simonc44/blob/main/cygnis-ai.png?raw=true" alt="CygnisAI">
+      </div>
+
+      <div class="title">
+        <div class="name">CygnisAI</div>
+        <div class="small">Mini-chat • 1 clic</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="reload" title="Recharger">⟳</button>
+        <button class="btn primary" id="open" title="Ouvrir dans un nouvel onglet">Ouvrir</button>
+      </div>
+    </div>
+
+    <div class="iframe-wrap">
+      <div class="placeholder" id="placeholder">
+        <div class="spinner" aria-hidden="true"></div>
+        <div class="title">Chargement de CygnisAI…</div>
+        <div class="desc">Si le site ne se charge pas, clique sur "Ouvrir" pour l'afficher dans un nouvel onglet.</div>
+      </div>
+
+      <!-- IFRAME: remplace l'URL par la page spécifique que tu veux afficher -->
+      <iframe id="cygnisFrame" src="https://outside-friendship-clinics-signed.trycloudflare.com" title="CygnisAI mini"></iframe>
+    </div>
+
+    <div class="footer">
+      <div>© CygnisAI</div>
+      <div><a href="https://cygnis.gt.tc/" target="_blank" rel="noopener">Voir le site</a></div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
