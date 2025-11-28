@@ -1,8 +1,8 @@
-# CygnisAI Chrome Extension 🚀
+# CygnisAI Chrome Extension
 
 CygnisAI Chrome Extension vous permet d'accéder rapidement à votre mini-chat et aux fonctionnalités de CygnisAI directement depuis votre navigateur. C’est un outil léger et pratique pour interagir avec l’IA sans ouvrir de nouvel onglet.
 
-![CygnisAI Extension](<img src="https://github.com/Simonc44/Simonc44/blob/main/cygnis-ai.png?raw=true" alt="CygnisAI Extension" width="150" height="150">)
+![CygnisAI Extension](https://github.com/Simonc44/Simonc44/blob/main/cygnis-ai.png?raw=true)
 
 ---
 
@@ -21,7 +21,7 @@ CygnisAI Chrome Extension vous permet d'accéder rapidement à votre mini-chat e
 1. Clonez ou téléchargez ce repository :
 
 ```bash
-git clone https://github.com/TON_UTILISATEUR/cygnis-extension.git
+git clone https://github.com/Simonc44/cygnis-extension.git
 ```
 ou cliquez sur **Code → Download ZIP**.
 
